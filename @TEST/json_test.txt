@@ -1,0 +1,24 @@
+{
+    "path": "/result/test.png",
+    "sizebefore": "323KB",
+    "sizeafter": "155KB",
+    "issuccess": true
+},
+{
+    "path": "/result/test1.png",
+    "sizebefore": "2048KB",
+    "sizeafter": "1648KB",
+    "issuccess": true
+},
+{
+    "path": "/result/test2.png",
+    "sizebefore": "785KB",
+    "sizeafter": "785KB",
+    "issuccess": false
+},
+{
+    "path": "/result/test3.png",
+    "sizebefore": "1024KB",
+    "sizeafter": "1024KB",
+    "issuccess": false
+}
