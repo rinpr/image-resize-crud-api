@@ -3,8 +3,10 @@ package controllers
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"time"
+
 	"github.com/gorilla/mux"
 	"github.com/rinpr/crud-api-golang/database"
 	"github.com/rinpr/crud-api-golang/models"
@@ -18,7 +20,8 @@ func CreateImageData(w http.ResponseWriter, r *http.Request) {
 	var image models.ImageData
 
 	json.NewDecoder(r.Body).Decode(&image)
-	image.Time = time.Now()
+	image.Time = time.Now().Format(time.RFC3339Nano)
+	fmt.Println(image.Time)
 
 	collection := database.ImageData()
 	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
