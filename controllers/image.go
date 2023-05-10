@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"time"
 
@@ -24,7 +25,10 @@ func CreateImageData(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(image.Time)
 
 	collection := database.ImageData()
-	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, err := context.WithTimeout(context.Background(), 10*time.Second)
+	if err != nil {
+		log.Panic(err)
+	}
 	result, _ := collection.InsertOne(ctx, image)
 
 	json.NewEncoder(w).Encode(result)
@@ -34,7 +38,10 @@ func GetImagesData(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var images []models.ImageData
 	collection := database.ImageData()
-	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, errs := context.WithTimeout(context.Background(), 10*time.Second)
+	if errs != nil {
+		log.Panic(errs)
+	}
 	cursor, err := collection.Find(ctx, bson.M{})
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -62,7 +69,10 @@ func GetImageData(w http.ResponseWriter, r *http.Request) {
 	id, _ := primitive.ObjectIDFromHex(params["imageId"])
 	var image models.ImageData
 	collection := database.ImageData()
-	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, errs := context.WithTimeout(context.Background(), 10*time.Second)
+	if errs != nil {
+		log.Panic(errs)
+	}
 	err := collection.FindOne(ctx, models.ImageData{Id: id}).Decode(&image)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
