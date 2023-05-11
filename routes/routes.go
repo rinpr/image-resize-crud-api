@@ -14,7 +14,7 @@ var RegisterImageDataRoutes = func(router *mux.Router) {
 	router.HandleFunc("/image-data", controllers.GetImagesData).Methods("GET")
 	router.HandleFunc("/image-data/{imageId}", controllers.GetImageData).Methods("GET")
 	router.HandleFunc("/image-data/{imageId}", controllers.UpdateImageData).Methods("PUT")
-	// router.HandleFunc("/image-data/{imageId}", controllers.DeleteImageData).Methods("DELETE")
+	router.HandleFunc("/image-data/{imageId}", controllers.DeleteImageData).Methods("DELETE")
 }
 
 func ListenAndServe() {

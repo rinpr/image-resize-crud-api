@@ -115,14 +115,18 @@ func UpdateImageData(w http.ResponseWriter, r *http.Request) {
 
 
 
-// func DeleteImageData(w http.ResponseWriter, r *http.Request) {
-// 	w.Header().Set("Content-Type", "application/json")
-// 	params := mux.Vars(r)
-// 	for index, item := range image_data {
-// 		if item.Id, _ = strconv.Atoi(params["imageId"]); item.Id == item.Id {
-// 			image_data = append(image_data[:index], image_data[index + 1:]...)
-// 			break
-// 		}
-// 	}
-// 	json.NewEncoder(w).Encode(image_data)
-// }
+func DeleteImageData(w http.ResponseWriter, r *http.Request) {
+    w.Header().Set("Content-Type", "application/json")
+    params := mux.Vars(r)
+    id, _ := primitive.ObjectIDFromHex(params["imageId"])
+    collection := database.ImageData()
+    ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+    _, err := collection.DeleteOne(ctx, bson.M{"_id": id})
+    if err != nil {
+        w.WriteHeader(http.StatusInternalServerError)
+        w.Write([]byte(`{"message": "` + err.Error() + `"}`))
+        return
+    }
+    w.WriteHeader(http.StatusOK)
+    w.Write([]byte(`{"message": "Image data deleted successfully"}`))
+}
