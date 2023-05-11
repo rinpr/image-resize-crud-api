@@ -83,21 +83,40 @@ func GetImageData(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(image)
 }
 
-// func UpdateImageData(w http.ResponseWriter, r *http.Request) {
-// 	w.Header().Set("Content-Type", "application/json")
-// 	params := mux.Vars(r)
-// 	for index, item := range image_data {
-// 		if item.Id, _ = strconv.Atoi(params["imageId"]); item.Id == item.Id {
-// 			image_data = append(image_data[:index], image_data[index + 1:]...)
-// 			var image models.ImageData
-// 			_ = json.NewDecoder(r.Body).Decode(&image)
-// 			image.Id = item.Id
-// 			image_data = append(image_data, image)
-// 			json.NewEncoder(w).Encode(image)
-// 			return
-// 		}
-// 	}
-// }
+func UpdateImageData(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)
+	id, _ := primitive.ObjectIDFromHex(params["imageId"])
+	var image models.ImageData
+	json.NewDecoder(r.Body).Decode(&image)
+
+	collection := database.ImageData()
+	ctx, errs := context.WithTimeout(context.Background(), 10*time.Second)
+	if errs != nil {
+		log.Panic(errs)
+	}
+
+	result, err := collection.UpdateByID(ctx, id, image)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(`{"message": "` + err.Error() + `"}`))
+		return
+	}
+
+	json.NewEncoder(w).Encode(result)
+
+	// for index, item := range image_data {
+	// 	if item.Id, _ = id; item.Id == item.Id {
+	// 		image_data = append(image_data[:index], image_data[index + 1:]...)
+	// 		var image models.ImageData
+	// 		_ = json.NewDecoder(r.Body).Decode(&image)
+	// 		image.Id = item.Id
+	// 		image_data = append(image_data, image)
+	// 		json.NewEncoder(w).Encode(image)
+	// 		return
+	// 	}
+	// }
+}
 
 // func DeleteImageData(w http.ResponseWriter, r *http.Request) {
 // 	w.Header().Set("Content-Type", "application/json")
